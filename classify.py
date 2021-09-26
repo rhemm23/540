@@ -94,8 +94,6 @@ def p_word_given_label(vocab, training_data, label):
     tot_word_count = 0
     sum_word_count = {}
 
-    print(training_data)
-
     for dataset in training_data:
         if dataset['label'] == label:
             for word, count in dataset['bow'].items():
@@ -105,7 +103,7 @@ def p_word_given_label(vocab, training_data, label):
                 else:
                     sum_word_count[word] = count
 
-    for word in vocab:
+    for word in (vocab + [None]):
         num = smooth
         if word in sum_word_count:
             num += sum_word_count[word]
@@ -129,8 +127,14 @@ def train(training_directory, cutoff):
     """
     retval = {}
     label_list = [f for f in os.listdir(training_directory) if not f.startswith('.')] # ignore hidden files
-    # TODO: add your code here
+    
+    vocab = create_vocabulary(training_directory, cutoff)
+    training_data = load_training_data(vocab, training_directory)
 
+    retval['vocabulary'] = vocab
+    retval['log prior'] = prior(training_data, label_list)
+    retval['log p(w|y=2016)'] = p_word_given_label(vocab, training_data, '2016')
+    retval['log p(w|y=2020)'] = p_word_given_label(vocab, training_data, '2020')
 
     return retval
 
@@ -144,7 +148,18 @@ def classify(model, filepath):
             }
     """
     retval = {}
-    # TODO: add your code here
+    doc_bow = create_bow(model['vocabulary'], filepath)
+    
+    p_2016_given_doc = model['log prior']['2016']
+    p_2020_given_doc = model['log prior']['2020']
 
+    for word in doc_bow:
+        p_2016_given_doc += model['log p(w|y=2016)'][word] * doc_bow[word]
+        p_2020_given_doc += model['log p(w|y=2020)'][word] * doc_bow[word]
+
+    retval['log p(y=2016|x)'] = p_2016_given_doc
+    retval['log p(y=2020|x)'] = p_2020_given_doc
+
+    retval['predicted y'] = '2016' if p_2016_given_doc > p_2020_given_doc else '2020'
 
     return retval
