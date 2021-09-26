@@ -54,8 +54,19 @@ def create_bow(vocab, filepath):
         Note: label may be None
     """
     bow = {}
-    # TODO: add your code here
-
+    with open(filepath, 'r') as doc:
+        for word in doc:
+            word = word.strip()
+            if word in vocab:
+                if word in bow:
+                    bow[word] += 1
+                else:
+                    bow[word] = 1
+            else:
+                if None in bow:
+                    bow[None] += 1
+                else:
+                    bow[None] = 1
     return bow
 
 #Needs modifications
@@ -66,8 +77,10 @@ def prior(training_data, label_list):
 
     smooth = 1 # smoothing factor
     logprob = {}
-    # TODO: add your code here
 
+    for label in label_list:
+        count = sum(1 if dataset['label'] == label else 0 for dataset in training_data)
+        logprob[label] = math.log((count + smooth) / (len(training_data) + smooth * len(label_list)))
 
     return logprob
 
