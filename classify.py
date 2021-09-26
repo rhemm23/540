@@ -90,7 +90,28 @@ def p_word_given_label(vocab, training_data, label):
 
     smooth = 1 # smoothing factor
     word_prob = {}
-    # TODO: add your code here
+
+    tot_word_count = 0
+    sum_word_count = {}
+
+    print(training_data)
+
+    for dataset in training_data:
+        if dataset['label'] == label:
+            for word, count in dataset['bow'].items():
+                tot_word_count += count
+                if word in sum_word_count:
+                    sum_word_count[word] += count
+                else:
+                    sum_word_count[word] = count
+
+    for word in vocab:
+        num = smooth
+        if word in sum_word_count:
+            num += sum_word_count[word]
+
+        den = tot_word_count + smooth * (len(vocab) + 1)
+        word_prob[word] = math.log(num / den)
 
     return word_prob
 
