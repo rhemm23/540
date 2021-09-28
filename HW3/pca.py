@@ -2,26 +2,32 @@ from scipy.linalg import eigh
 import numpy as np
 import matplotlib.pyplot as plt
 
-
 def load_and_center_dataset(filename):
-    # TODO: add your code here
-
+  x = np.load(filename)
+  return x - np.mean(x, axis=0)
 
 def get_covariance(dataset):
-    # TODO: add your code here
+  res = None
+  for x in dataset:
+    row_res = np.dot(np.transpose(x), x)
+    if res == None:
+      res = row_res
+    else:
+      res += row_res
+  return res / (np.shape(dataset)[0] - 1)
 
 
 def get_eig(S, m):
-    # TODO: add your code here
+  print("")
 
 
 def get_eig_perc(S, perc):
-    # TODO: add your code here
+  print("")
 
 
 def project_image(img, U):
-    # TODO: add your code here
+  print("")
 
 
 def display_image(orig, proj):
-    # TODO: add your code here
+  print("")
