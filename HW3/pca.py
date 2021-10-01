@@ -20,7 +20,24 @@ def get_covariance(dataset):
 def get_eig(S, m):
   N = S.shape[0]
   vals, vecs = eigh(S, eigvals=(N - m, N - 1))
-  return np.diag(np.flip(vals)), np.flip(vecs, axis=1)
+  vals_inds = []
+
+  # Get value and original index
+  for i, val in enumerate(vals):
+    vals_inds.append((val, i))
+
+  # Sort in desc order
+  vals_inds.sort(key = lambda x: x[0], reverse=True)
+  
+  # Sort columns
+  indices = [val_ind[1] for val_ind in vals_inds]
+  vecs = vecs[:,indices]
+
+  # Create diag matrix
+  arr = np.array([val_ind[0] for val_ind in vals_inds])
+  diag = np.diag(arr)
+
+  return diag, vecs
 
 def get_eig_perc(S, perc):
   vals, vecs = eigh(S)
@@ -78,3 +95,7 @@ def display_image(orig, proj):
   
   # Show
   plt.show()
+
+x = load_and_center_dataset('YaleB_32x32.npy')
+S = get_covariance(x)
+Lambda, U = get_eig(S, 2)
