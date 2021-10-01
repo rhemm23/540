@@ -95,7 +95,3 @@ def display_image(orig, proj):
   
   # Show
   plt.show()
-
-x = load_and_center_dataset('YaleB_32x32.npy')
-S = get_covariance(x)
-Lambda, U = get_eig(S, 2)
