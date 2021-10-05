@@ -132,7 +132,7 @@ def imshow_hac(dataset):
     colors.append(color)
 
   # Plot
-  plt.scatter(x_vals, y_vals, c=color_vals)
+  plt.scatter(x_vals, y_vals, c=colors)
   plt.show()
 
 pokemon = load_data("./Pokemon.csv")
