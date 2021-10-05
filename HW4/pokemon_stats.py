@@ -114,16 +114,14 @@ def random_x_y(m):
 
 def imshow_hac(dataset):
 
-  x_vals = []
-  y_vals = []
-  colors = []
+  # Cluster by index
+  clusts = {}
+  m = len(dataset)
 
   for i, pokemon in enumerate(dataset):
 
     # Calc pokemon stats
     data_point = calculate_x_y(pokemon)
-    x_vals.append(data_point[0])
-    y_vals.append(data_point[1])
 
     # Generate colors
     color = '#'
@@ -131,9 +129,37 @@ def imshow_hac(dataset):
       color += random.choice('0123456789ABCDEF')
     colors.append(color)
 
-  # Plot
+    # Add new cluster
+    clusts[i] = ([data_point], color)
+
+  Z = hac(dataset)
+
+  # Plot initial data points
   plt.scatter(x_vals, y_vals, c=colors)
   plt.show()
+  plt.pause(0.1)
+
+  # Iterate through cluster merges
+  for i, iteration in enumerate(Z):
+    clust_a = clusts[iteration[0]]
+    clust_b = clusts[iteration[1]]
+
+    clusts[m + i] = (clust_a[0] + clust_b[0],  clust_a[0])
+
+    del clusts[iteration[0]]
+    del clusts[iteration[1]]
+
+    # Add data points
+    for ind in clusts:
+      clust = clusts[ind]
+      for data_point in clust[0]:
+        plt.scatter(data_point[0], data_point[1], c=clust[1])
+
+    # Add lines between points
+    for j in range(i + 1):
+      
+
+
 
 pokemon = load_data("./Pokemon.csv")
 imshow_hac(pokemon)
