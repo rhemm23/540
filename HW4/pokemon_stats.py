@@ -116,14 +116,22 @@ def imshow_hac(dataset):
 
   x_vals = []
   y_vals = []
-  color_vals = []
+  colors = []
 
   for i, pokemon in enumerate(dataset):
+
+    # Calc pokemon stats
     data_point = calculate_x_y(pokemon)
-    color_vals.append(i)
     x_vals.append(data_point[0])
     y_vals.append(data_point[1])
 
+    # Generate colors
+    color = '#'
+    for j in range(6):
+      color += random.choice('0123456789ABCDEF')
+    colors.append(color)
+
+  # Plot
   plt.scatter(x_vals, y_vals, c=color_vals)
   plt.show()
 
