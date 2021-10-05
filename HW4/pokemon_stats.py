@@ -117,11 +117,12 @@ def imshow_hac(dataset):
   # Cluster by index
   clusts = {}
   m = len(dataset)
+  pokemon_stats = []
 
   for i, pokemon in enumerate(dataset):
-
     # Calc pokemon stats
     data_point = calculate_x_y(pokemon)
+    pokemon_stats.append(data_point)
 
     # Generate color
     color = '#'
@@ -131,7 +132,7 @@ def imshow_hac(dataset):
     # Add new cluster
     clusts[i] = ([data_point], color)
 
-  Z = hac(dataset)
+  Z = hac(pokemon_stats)
 
   # Plot initial data points
   plt.scatter(x_vals, y_vals, c=colors)
