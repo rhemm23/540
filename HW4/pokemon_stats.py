@@ -135,7 +135,10 @@ def imshow_hac(dataset):
   Z = hac(pokemon_stats)
 
   # Plot initial data points
-  plt.scatter(x_vals, y_vals, c=colors)
+  for clust_ind in clusts:
+    clust = clusts[clust_ind]
+    plt.scatter(clusts[0][0][0], clusts[0][0][1], c=clust[1])
+
   plt.show()
   plt.pause(0.1)
 
