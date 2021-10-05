@@ -165,7 +165,7 @@ def imshow_hac(dataset):
 
     merge_points.append(((data_point_a[0], data_point_b[0]), (data_point_a[1], data_point_b[1])))
 
-    clusts[m + i] = (clust_a[0] + clust_b[0],  clust_a[0])
+    clusts[m + i] = (clust_a[0] + clust_b[0],  clust_a[1])
 
     del clusts[iteration[0]]
     del clusts[iteration[1]]
