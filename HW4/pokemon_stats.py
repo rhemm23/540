@@ -113,42 +113,37 @@ def random_x_y(m):
   return data
 
 def imshow_hac(dataset):
-
-  # Cluster by index
+  # Init data
   clusts = {}
   m = len(dataset)
   pokemon_stats = []
 
+  # For each pokemon
   for i, pokemon in enumerate(dataset):
     # Calc pokemon stats
     data_point = calculate_x_y(pokemon)
     pokemon_stats.append(data_point)
 
+  Z = hac(pokemon_stats)
+
+  for i in range(m):
     # Generate color
     color = '#'
     for j in range(6):
       color += random.choice('0123456789ABCDEF')
 
-    # Add new cluster
-    clusts[i] = ([data_point], color)
+    # Plot initial scatter
+    plt.scatter(pokemon_stats[i][0], pokemon_stats[i][1], c=color)
+    clusts[i] = ([pokemon_stats[i]], color)
 
-  Z = hac(pokemon_stats)
-
-  # Plot initial data points
-  for clust_ind in clusts:
-    clust = clusts[clust_ind]
-    plt.scatter(clust[0][0][0], clust[0][0][1], c=clust[1])
-
+  # Show plot
   plt.show()
   plt.pause(0.1)
 
-  # Keep track of data points connected
-  merge_points = []
-
-  # Iterate through cluster merges
-  for i, iteration in enumerate(Z):
-    clust_a = clusts[iteration[0]]
-    clust_b = clusts[iteration[1]]
+  # Iterate over Z
+  for i in range(m - 1):
+    clust_a = clusts[Z[i][0]]
+    clust_b = clusts[Z[i][1]]
 
     min_dist = float('inf')
     min_pnt_a = None
@@ -163,26 +158,18 @@ def imshow_hac(dataset):
           min_pnt_a = data_point_a
           min_pnt_b = data_point_b
 
-    merge_points.append(((data_point_a[0], data_point_b[0]), (data_point_a[1], data_point_b[1])))
+    # Replot each point in merged clust to update color
+    merged_clust = (clust_a[0] + clust_b[0], clust_a[1])
+    for data_point in merged_clust[0]:
+      plt.scatter(data_point[0], data_point[1], merged_clust[1])
 
-    clusts[m + i] = (clust_a[0] + clust_b[0],  clust_a[1])
-
-    del clusts[iteration[0]]
-    del clusts[iteration[1]]
-
-    # Add data points
-    for ind in clusts:
-      clust = clusts[ind]
-      for data_point in clust[0]:
-        plt.scatter(data_point[0], data_point[1], c=clust[1])
-
-    # Add lines between points
-    for merge_point in merge_points:
-      plt.plot(merge_point[0], merge_point[1])
-
-    plt.show()
+    # Plot line between connecting clusters
+    plt.plot([min_pnt_a[0], min_pnt_b[0]], [min_pnt_a[0], min_pnt_b[0]], merged_clust[1])
     plt.pause(0.1)
 
+    # Delete old clusts
+    del clusts[Z[i][0]]
+    del clusts[Z[i][0]]
 
 pokemon = load_data("./Pokemon.csv")
 imshow_hac(pokemon)
