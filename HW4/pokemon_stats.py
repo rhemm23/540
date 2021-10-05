@@ -139,10 +139,28 @@ def imshow_hac(dataset):
   plt.show()
   plt.pause(0.1)
 
+  # Keep track of data points connected
+  merge_points = []
+
   # Iterate through cluster merges
   for i, iteration in enumerate(Z):
     clust_a = clusts[iteration[0]]
     clust_b = clusts[iteration[1]]
+
+    min_dist = float('inf')
+    min_pnt_a = None
+    min_pnt_b = None
+
+    # Find points that merged
+    for data_point_a in clust_a[0]:
+      for data_point_b in clust_b[0]:
+        dist = math.sqrt(abs(data_point_a[0] - data_point_b[0])**2 + abs(data_point_a[1] - data_point_b[1])**2)
+        if (dist < min_dist):
+          min_dist = dist
+          min_pnt_a = data_point_a
+          min_pnt_b = data_point_b
+
+    merge_points.append(((data_point_a[0], data_point_b[0]), (data_point_a[1], data_point_b[1])))
 
     clusts[m + i] = (clust_a[0] + clust_b[0],  clust_a[0])
 
@@ -156,9 +174,11 @@ def imshow_hac(dataset):
         plt.scatter(data_point[0], data_point[1], c=clust[1])
 
     # Add lines between points
-    for j in range(i + 1):
-      
+    for merge_point in merge_points:
+      plt.plot(merge_point[0], merge_point[1])
 
+    plt.show()
+    plt.pause(0.1)
 
 
 pokemon = load_data("./Pokemon.csv")
