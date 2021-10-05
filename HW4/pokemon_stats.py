@@ -8,7 +8,7 @@ def load_data(filepath):
   pokemon = []
   with open(filepath, 'r') as file:
     reader = csv.DictReader(file)
-    for i in range(20):
+    for _ in range(20):
       row = next(reader)
       pokemon.append({
         '#': int(row['#']),
@@ -35,11 +35,11 @@ def hac(dataset):
   # Init variables
   m = len(dataset)
   Z = np.empty((m - 1, 4))
-  clusters = []
+  clusters = {}
 
   # Build initial clusters
   for i, data_point in enumerate(dataset):
-    clusters.append(([data_point], i))
+    clusters[i] = [data_point]
 
   # Perform m - 1 iterations
   for i in range(m - 1):
@@ -48,18 +48,20 @@ def hac(dataset):
     min_clust_dist = float('inf')
     min_clust_a = None
     min_clust_b = None
+    min_clust_a_ind = None
+    min_clust_b_ind = None
 
     # Iterate over clusters
-    for j in range(len(clusters)):
-      for k in range(len(clusters)):
+    for j in clusters:
+      for k in clusters:
         if j != k:
           clust_dist = float('inf')
           clust_a = clusters[j]
           clust_b = clusters[k]
 
           # Iterate over each data_point in clusters a and b
-          for data_point_a in clust_a[0]:
-            for data_point_b in clust_b[0]:
+          for data_point_a in clust_a:
+            for data_point_b in clust_b:
 
               # Calculate data point dist
               dist = math.sqrt(abs(data_point_a[0] - data_point_b[0])**2 + abs(data_point_a[1] - data_point_b[1])**2)
@@ -72,12 +74,12 @@ def hac(dataset):
             update_min_clusts = True
           elif clust_dist == min_clust_dist:
             # Calc cur index values to break ties
-            cur_min_ind = min(min_clust_a[1], min_clust_b[1])
-            cur_max_ind = max(min_clust_a[1], min_clust_b[1])
+            cur_min_ind = min(min_clust_a_ind, min_clust_b_ind)
+            cur_max_ind = max(min_clust_a_ind, min_clust_b_ind)
 
             # Calc new index values
-            new_min_ind = min(clust_a[1], clust_b[1])
-            new_max_ind = max(clust_a[1], clust_b[1])
+            new_min_ind = min(j, k)
+            new_max_ind = max(j, k)
 
             # Break ties
             if new_min_ind < cur_min_ind:
@@ -90,25 +92,28 @@ def hac(dataset):
             min_clust_dist = clust_dist
             min_clust_a = clust_a
             min_clust_b = clust_b
+            min_clust_a_ind = j
+            min_clust_b_ind = k
 
     # Store iteration info
-    Z[i][0] = min(min_clust_a[1], min_clust_b[1])
-    Z[i][1] = max(min_clust_a[1], min_clust_b[1])
+    Z[i][0] = min(min_clust_a_ind, min_clust_b_ind)
+    Z[i][1] = max(min_clust_a_ind, min_clust_b_ind)
     Z[i][2] = min_clust_dist
-    Z[i][3] = len(min_clust_a[0]) + len(min_clust_b[0])
+    Z[i][3] = len(min_clust_a) + len(min_clust_b)
 
     # Merge the two clusters
-    merged_clust = (min_clust_a[0] + min_clust_b[0], m + i)
+    merged_clust = min_clust_a + min_clust_b
+    clusters[m + i] = merged_clust
 
-    # Update cluster list
-    clusters.append(merged_clust)
-    clusters = [clust for clust in clusters if (clust[1] != min_clust_a[1]) and (clust[1] != min_clust_b[1])]
-  
+    # Delete old clusters
+    del clusters[min_clust_a_ind]
+    del clusters[min_clust_b_ind]
+
   return Z
 
 def random_x_y(m):
   data = []
-  for i in range(m):
+  for _ in range(m):
     data.append((random.randrange(1, 360), random.randrange(1, 360)))
   return data
 
@@ -119,10 +124,8 @@ def imshow_hac(dataset):
   pokemon_stats = []
 
   # For each pokemon
-  for i, pokemon in enumerate(dataset):
-    # Calc pokemon stats
-    data_point = calculate_x_y(pokemon)
-    pokemon_stats.append(data_point)
+  for pokemon in dataset:
+    pokemon_stats.append(calculate_x_y(pokemon))
 
   Z = hac(pokemon_stats)
 
