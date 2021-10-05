@@ -137,7 +137,6 @@ def imshow_hac(dataset):
     clusts[i] = ([pokemon_stats[i]], color)
 
   # Show plot
-  plt.show()
   plt.pause(0.1)
 
   # Iterate over Z
@@ -165,12 +164,13 @@ def imshow_hac(dataset):
 
     # Plot line between connecting clusters
     plt.plot([min_pnt_a[0], min_pnt_b[0]], [min_pnt_a[0], min_pnt_b[0]], merged_clust[1])
-    plt.draw()
     plt.pause(0.1)
 
     # Delete old clusts
     del clusts[Z[i][0]]
     del clusts[Z[i][0]]
+
+    plt.show()
 
 pokemon = load_data("./Pokemon.csv")
 imshow_hac(pokemon)
