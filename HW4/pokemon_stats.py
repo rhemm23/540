@@ -177,6 +177,3 @@ def imshow_hac(dataset):
     del clusts[Z[i][1]]
 
   plt.show()
-
-pokemon = load_data("./Pokemon.csv")
-imshow_hac(pokemon)
