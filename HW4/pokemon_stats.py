@@ -1,4 +1,5 @@
 import numpy as np
+import math
 import csv
 
 def load_data(filepath):
@@ -55,16 +56,35 @@ def hac(dataset):
           clust_b = clusters[k]
 
           # Iterate over each data_point in clusters a and b
-          for data_point_a in clust_a:
-            for data_point_b in clust_b:
+          for data_point_a in clust_a[0]:
+            for data_point_b in clust_b[0]:
 
               # Calculate data point dist
               dist = math.sqrt(abs(data_point_a[0] - data_point_b[0])**2 + abs(data_point_a[1] - data_point_b[1])**2)
               if dist < clust_dist:
                 clust_dist = dist
 
-          # Update min distance between all clusters
+          # Determine if we should update min clust
+          update_min_clusts = False
           if clust_dist < min_clust_dist:
+            update_min_clusts = True
+          elif clust_dist == min_clust_dist:
+            # Calc cur index values to break ties
+            cur_min_ind = min(min_clust_a[1], min_clust_b[1])
+            cur_max_ind = max(min_clust_a[1], min_clust_b[1])
+
+            # Calc new index values
+            new_min_ind = min(clust_a[1], clust_b[1])
+            new_max_ind = max(clust_a[1], clust_b[1])
+
+            # Break ties
+            if new_min_ind < cur_min_ind:
+              update_min_clusts = True
+            elif new_min_ind == cur_min_ind:
+              update_min_clusts = new_max_ind < cur_max_ind
+
+          # Update min clust
+          if update_min_clusts:
             min_clust_dist = clust_dist
             min_clust_a = clust_a
             min_clust_b = clust_b
@@ -80,7 +100,12 @@ def hac(dataset):
 
     # Update cluster list
     clusters.append(merged_clust)
-    clusters = filter(lambda clust: clust[1] != min_clust_a[1] && clust[1] != min_clust_b[1], clusters)
+    clusters = [clust for clust in clusters if (clust[1] != min_clust_a[1]) and (clust[1] != min_clust_b[1])]
+  
+  return Z
 
 pokemon = load_data("./Pokemon.csv")
-print(calculate_x_y(pokemon[1]))
+stats = []
+for poke in pokemon:
+  stats.append(calculate_x_y(poke))
+print(hac(stats))
