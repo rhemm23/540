@@ -134,7 +134,7 @@ def imshow_hac(dataset):
 
     # Plot initial scatter
     plt.scatter(pokemon_stats[i][0], pokemon_stats[i][1], c=color)
-    clusts[i] = ([pokemon_stats[i]], color)
+    clusts[i] = ([pokemon_stats[i]], color, [])
 
   # Show plot
   plt.pause(0.1)
@@ -157,15 +157,19 @@ def imshow_hac(dataset):
           min_pnt_a = data_point_a
           min_pnt_b = data_point_b
 
-    # Replot each point in merged clust to update color
-    merged_clust = (clust_a[0] + clust_b[0], clust_a[1])
+    new_clust_line = ([min_pnt_a[0], min_pnt_b[0]], [min_pnt_a[1], min_pnt_b[1]])
+    merged_clust = (clust_a[0] + clust_b[0], clust_a[1], clust_a[2] + clust_b[2] + [new_clust_line])
     clusts[m + i] = merged_clust
 
+    # Replot each point in merged clust to update color
     for data_point in merged_clust[0]:
       plt.scatter(data_point[0], data_point[1], c=merged_clust[1])
 
-    # Plot line between connecting clusters
-    plt.plot([min_pnt_a[0], min_pnt_b[0]], [min_pnt_a[1], min_pnt_b[1]], c=merged_clust[1])
+    # Replot each line for each clust
+    for line in merged_clust[2]:
+      plt.plot(line[0], line[1], c=merged_clust[1])
+
+    # Pause
     plt.pause(0.1)
 
     # Delete old clusts
