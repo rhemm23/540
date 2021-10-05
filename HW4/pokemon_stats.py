@@ -170,7 +170,7 @@ def imshow_hac(dataset):
 
     # Delete old clusts
     del clusts[Z[i][0]]
-    del clusts[Z[i][0]]
+    del clusts[Z[i][1]]
 
     plt.show()
 
