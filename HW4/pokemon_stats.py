@@ -123,11 +123,10 @@ def imshow_hac(dataset):
     # Calc pokemon stats
     data_point = calculate_x_y(pokemon)
 
-    # Generate colors
+    # Generate color
     color = '#'
     for j in range(6):
       color += random.choice('0123456789ABCDEF')
-    colors.append(color)
 
     # Add new cluster
     clusts[i] = ([data_point], color)
