@@ -116,13 +116,15 @@ def imshow_hac(dataset):
 
   x_vals = []
   y_vals = []
+  color_vals = []
 
-  for pokemon in dataset:
+  for i, pokemon in enumerate(dataset):
     data_point = calculate_x_y(pokemon)
+    color_vals.append(i)
     x_vals.append(data_point[0])
     y_vals.append(data_point[1])
 
-  plt.scatter(x_vals, y_vals)
+  plt.scatter(x_vals, y_vals, c=color_vals)
   plt.show()
 
 pokemon = load_data("./Pokemon.csv")
