@@ -159,6 +159,8 @@ def imshow_hac(dataset):
 
     # Replot each point in merged clust to update color
     merged_clust = (clust_a[0] + clust_b[0], clust_a[1])
+    clusts[m + i] = merged_clust
+
     for data_point in merged_clust[0]:
       plt.scatter(data_point[0], data_point[1], c=merged_clust[1])
 
