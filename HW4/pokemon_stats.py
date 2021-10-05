@@ -137,7 +137,7 @@ def imshow_hac(dataset):
   # Plot initial data points
   for clust_ind in clusts:
     clust = clusts[clust_ind]
-    plt.scatter(clusts[0][0][0], clusts[0][0][1], c=clust[1])
+    plt.scatter(clust[0][0][0], clust[0][0][1], c=clust[1])
 
   plt.show()
   plt.pause(0.1)
