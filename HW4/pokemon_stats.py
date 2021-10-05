@@ -1,4 +1,6 @@
+import matplotlib.pyplot as plt
 import numpy as np
+import random
 import math
 import csv
 
@@ -104,8 +106,24 @@ def hac(dataset):
   
   return Z
 
+def random_x_y(m):
+  data = []
+  for i in range(m):
+    data.append((random.randrange(1, 360), random.randrange(1, 360)))
+  return data
+
+def imshow_hac(dataset):
+
+  x_vals = []
+  y_vals = []
+
+  for pokemon in dataset:
+    data_point = calculate_x_y(pokemon)
+    x_vals.append(data_point[0])
+    y_vals.append(data_point[1])
+
+  plt.scatter(x_vals, y_vals)
+  plt.show()
+
 pokemon = load_data("./Pokemon.csv")
-stats = []
-for poke in pokemon:
-  stats.append(calculate_x_y(poke))
-print(hac(stats))
+imshow_hac(pokemon)
