@@ -165,6 +165,7 @@ def imshow_hac(dataset):
 
     # Plot line between connecting clusters
     plt.plot([min_pnt_a[0], min_pnt_b[0]], [min_pnt_a[0], min_pnt_b[0]], merged_clust[1])
+    plt.draw()
     plt.pause(0.1)
 
     # Delete old clusts
