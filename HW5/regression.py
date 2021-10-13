@@ -1,5 +1,6 @@
 from matplotlib import pyplot as plt
 import numpy as np
+import math
 import csv
 
 def get_dataset(filename):
@@ -28,19 +29,23 @@ def get_dataset(filename):
   return np.array(dataset)
 
 def print_stats(dataset, col):
-    """
-    TODO: implement this function.
+  # Number of data points
+  n = dataset.shape[0]
+  print(n)
 
-    INPUT: 
-        dataset - the body fat n by m+1 array
-        col     - the index of feature to summarize on. 
-                  For example, 1 refers to density.
+  # Mean
+  mean = 0
+  for data_point in dataset:
+    mean += data_point[col]
+  mean *= (1 / n)
+  print('{:0.2f}'.format(mean))
 
-    RETURNS:
-        None
-    """
-    pass
-
+  # Standard deviation
+  std_dev = 0
+  for data_point in dataset:
+    std_dev += (mean - data_point[col])**2
+  std_dev = math.sqrt(std_dev * (1 / (n - 1)))
+  print('{:0.2f}'.format(std_dev))
 
 def regression(dataset, cols, betas):
     """
@@ -156,4 +161,5 @@ if __name__ == '__main__':
     ### DO NOT CHANGE THIS SECTION ###
     plot_mse()
 
-print(get_dataset('./bodyfat.csv').shape)
+dataset = get_dataset('./bodyfat.csv')
+print_stats(dataset, 1)
