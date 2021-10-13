@@ -79,22 +79,18 @@ def gradient_descent(dataset, cols, betas):
   return gradients
 
 def iterate_gradient(dataset, cols, betas, T, eta):
-    """
-    TODO: implement this function.
-
-    INPUT: 
-        dataset - the body fat n by m+1 array
-        cols    - a list of feature indices to learn.
-                  For example, [1,8] refers to density and abdomen.
-        betas   - a list of elements chosen from [beta0, beta1, ..., betam]
-        T       - # iterations to run
-        eta     - learning rate
-
-    RETURNS:
-        None
-    """
-    pass
-
+  for i in range(T):
+    gradients = gradient_descent(dataset, cols, betas)
+    for j in range(len(betas)):
+      betas[j] = betas[j] - (eta * gradients[j])
+    print('{} '.format(i + 1), end='')
+    print('{:0.2f} '.format(regression(dataset, cols, betas)), end='')
+    for j in range(len(betas)):
+      print('{:0.2f}'.format(betas[j]), end='')
+      if j != (len(betas) - 1):
+        print(' ', end='')
+      else:
+        print()
 
 def compute_betas(dataset, cols):
     """
@@ -112,7 +108,6 @@ def compute_betas(dataset, cols):
     mse = None
     return (mse, *betas)
 
-
 def predict(dataset, cols, features):
     """
     TODO: implement this function.
@@ -129,7 +124,6 @@ def predict(dataset, cols, features):
     result = None
     return result
 
-
 def synthetic_datasets(betas, alphas, X, sigma):
     """
     TODO: implement this function.
@@ -145,7 +139,6 @@ def synthetic_datasets(betas, alphas, X, sigma):
     """
     return None, None
 
-
 def plot_mse():
     from sys import argv
     if len(argv) == 2 and argv[1] == 'csl':
@@ -159,4 +152,4 @@ if __name__ == '__main__':
     plot_mse()
 
 dataset = get_dataset('./bodyfat.csv')
-print(gradient_descent(dataset, cols=[1,4], betas=[0,0,0]))
+iterate_gradient(dataset, cols=[1,4], betas=[400,-400,10], T=5, eta=1e-4)
