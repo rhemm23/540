@@ -48,21 +48,13 @@ def print_stats(dataset, col):
   print('{:0.2f}'.format(std_dev))
 
 def regression(dataset, cols, betas):
-    """
-    TODO: implement this function.
-
-    INPUT: 
-        dataset - the body fat n by m+1 array
-        cols    - a list of feature indices to learn.
-                  For example, [1,8] refers to density and abdomen.
-        betas   - a list of elements chosen from [beta0, beta1, ..., betam]
-
-    RETURNS:
-        mse of the regression model
-    """
-    mse = None
-    return mse
-
+  mse = 0
+  for data_point in dataset:
+    point_sum = betas[0]
+    for i in range(len(cols)):
+      point_sum += data_point[cols[i]] * betas[i + 1]
+    mse += (point_sum - data_point[0])**2
+  return mse * (1 / dataset.shape[0])
 
 def gradient_descent(dataset, cols, betas):
     """
@@ -162,4 +154,4 @@ if __name__ == '__main__':
     plot_mse()
 
 dataset = get_dataset('./bodyfat.csv')
-print_stats(dataset, 1)
+print(regression(dataset, cols=[2, 3, 4], betas=[0,-1.1,-0.2,3]))
