@@ -1,25 +1,31 @@
-import numpy as np
 from matplotlib import pyplot as plt
-
-
-# Feel free to import other packages, if needed.
-# As long as they are supported by CSL machines.
-
+import numpy as np
+import csv
 
 def get_dataset(filename):
-    """
-    TODO: implement this function.
-
-    INPUT: 
-        filename - a string representing the path to the csv file.
-
-    RETURNS:
-        An n by m+1 array, where n is # data points and m is # features.
-        The labels y should be in the first column.
-    """
-    dataset = None
-    return dataset
-
+  dataset = []
+  with open(filename, 'r') as file:
+    data_reader = csv.DictReader(file)
+    for row in data_reader:
+      dataset.append([
+        float(row['BODYFAT']),
+        float(row['DENSITY']),
+        float(row['AGE']),
+        float(row['WEIGHT']),
+        float(row['HEIGHT']),
+        float(row['ADIPOSITY']),
+        float(row['NECK']),
+        float(row['CHEST']),
+        float(row['ABDOMEN']),
+        float(row['HIP']),
+        float(row['THIGH']),
+        float(row['KNEE']),
+        float(row['ANKLE']),
+        float(row['BICEPS']),
+        float(row['FOREARM']),
+        float(row['WRIST'])
+      ])
+  return np.array(dataset)
 
 def print_stats(dataset, col):
     """
@@ -146,7 +152,8 @@ def plot_mse():
 
     # TODO: Generate datasets and plot an MSE-sigma graph
 
-
 if __name__ == '__main__':
     ### DO NOT CHANGE THIS SECTION ###
     plot_mse()
+
+print(get_dataset('./bodyfat.csv').shape)
