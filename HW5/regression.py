@@ -1,5 +1,6 @@
 from matplotlib import pyplot as plt
 import numpy as np
+import random
 import math
 import csv
 
@@ -76,7 +77,7 @@ def gradient_descent(dataset, cols, betas):
     for i, data_point in enumerate(dataset):
       part_sum += errs[i] * data_point[col_index]
     gradients.append(part_sum * (2 / n))
-  return gradients
+  return np.array(gradients)
 
 def iterate_gradient(dataset, cols, betas, T, eta):
   for i in range(T):
@@ -123,31 +124,67 @@ def predict(dataset, cols, features):
   return res
 
 def synthetic_datasets(betas, alphas, X, sigma):
-    """
-    TODO: implement this function.
+  y_lin = []
+  y_quad = []
+  for x_i in X:
+    # Compute linear data
+    z_i_lin = np.random.normal(0, sigma)
+    y_lin.append([betas[0] + betas[1] * x_i[0] + z_i_lin, x_i[0]])
 
-    Input:
-        betas  - parameters of the linear model
-        alphas - parameters of the quadratic model
-        X      - the input array (shape is guaranteed to be (n,1))
-        sigma  - standard deviation of noise
-
-    RETURNS:
-        Two datasets of shape (n,2) - linear one first, followed by quadratic.
-    """
-    return None, None
+    # Compute quadratic data
+    z_i_quad = np.random.normal(0, sigma)
+    y_quad.append([alphas[0] + alphas[1] * x_i[0] * x_i[0] + z_i_quad, x_i[0]])
+  return (np.array(y_lin), np.array(y_quad))
 
 def plot_mse():
-    from sys import argv
-    if len(argv) == 2 and argv[1] == 'csl':
-        import matplotlib
-        matplotlib.use('Agg')
+  from sys import argv
+  if len(argv) == 2 and argv[1] == 'csl':
+      import matplotlib
+      matplotlib.use('Agg')
 
-    # TODO: Generate datasets and plot an MSE-sigma graph
+  # Random X values
+  X = np.random.randint(-100, 101, (1000, 1))
+
+  # Random alpha/beta values
+  betas = [random.random() + 1, random.random() + 1]
+  alphas = [random.random() + 1, random.random() + 1]
+
+  # Defined sigma values
+  sigmas = [1e-4, 1e-3, 1e-2, 1e-1, 1, 1e1, 1e2, 1e3, 1e4, 1e5]
+
+  # MSE values
+  lin_mse = []
+  quad_mse = []
+
+  # For all sigmas
+  for sigma in sigmas:
+    # Synthesize data
+    syn_data = synthetic_datasets(betas, alphas, X, sigma)
+
+    # Find betas for each dataset
+    lin_betas = compute_betas(syn_data[0], cols=[1])
+    quad_betas = compute_betas(syn_data[1], cols=[1])
+
+    # Store mse
+    lin_mse.append(lin_betas[0])
+    quad_mse.append(quad_betas[0])
+
+  # Set scale
+  plt.yscale('log')
+  plt.xscale('log')
+
+  # Set axis labels
+  plt.xlabel('Standard Deviation of Error Term')
+  plt.ylabel('MSE of Trained Model')
+
+  # Plot linear and quadratic data
+  plt.plot(sigmas, lin_mse, '-o', label='MSE of Linear Dataset')
+  plt.plot(sigmas, quad_mse, '-o', label='MSE of Quadratic Dataset')
+
+  # Save figure
+  plt.legend()
+  plt.savefig('mse.pdf')
 
 if __name__ == '__main__':
-    ### DO NOT CHANGE THIS SECTION ###
-    plot_mse()
-
-dataset = get_dataset('./bodyfat.csv')
-print(predict(dataset, cols=[1,2], features=[1.0708, 23]))
+  ### DO NOT CHANGE THIS SECTION ###
+  plot_mse()
