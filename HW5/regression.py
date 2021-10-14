@@ -113,20 +113,14 @@ def compute_betas(dataset, cols):
   return (mse, *betas)
 
 def predict(dataset, cols, features):
-    """
-    TODO: implement this function.
-
-    INPUT: 
-        dataset - the body fat n by m+1 array
-        cols    - a list of feature indices to learn.
-                  For example, [1,8] refers to density and abdomen.
-        features- a list of observed values
-
-    RETURNS:
-        The predicted body fat percentage value
-    """
-    result = None
-    return result
+  # Compute betas
+  betas = compute_betas(dataset, cols)
+  
+  # Form prediction
+  res = betas[1]
+  for i in range(len(cols)):
+    res += betas[i + 2] * features[i]
+  return res
 
 def synthetic_datasets(betas, alphas, X, sigma):
     """
@@ -156,4 +150,4 @@ if __name__ == '__main__':
     plot_mse()
 
 dataset = get_dataset('./bodyfat.csv')
-print(compute_betas(dataset, cols=[1,2,8,9]))
+print(predict(dataset, cols=[1,2], features=[1.0708, 23]))
