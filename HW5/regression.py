@@ -93,20 +93,24 @@ def iterate_gradient(dataset, cols, betas, T, eta):
         print()
 
 def compute_betas(dataset, cols):
-    """
-    TODO: implement this function.
+  # Form X and Y from dataset
+  X = dataset[:,cols]
+  Y = dataset[:,0]
 
-    INPUT: 
-        dataset - the body fat n by m+1 array
-        cols    - a list of feature indices to learn.
-                  For example, [1,8] refers to density and abdomen.
+  # Column of ones for beta_0
+  n = dataset.shape[0]
+  bias_col = np.ones((n, 1))
 
-    RETURNS:
-        A tuple containing corresponding mse and several learned betas
-    """
-    betas = None
-    mse = None
-    return (mse, *betas)
+  # Add ones to beginning of X
+  X = np.concatenate((bias_col, X), axis=1)
+
+  # Calculate betas
+  betas = np.dot(np.linalg.inv(np.dot(X.T, X)), np.dot(X.T, Y))
+
+  # Calculate mse
+  mse = regression(dataset, cols, betas)
+
+  return (mse, *betas)
 
 def predict(dataset, cols, features):
     """
@@ -152,4 +156,4 @@ if __name__ == '__main__':
     plot_mse()
 
 dataset = get_dataset('./bodyfat.csv')
-iterate_gradient(dataset, cols=[1,4], betas=[400,-400,10], T=5, eta=1e-4)
+print(compute_betas(dataset, cols=[1,2,8,9]))
