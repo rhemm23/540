@@ -42,7 +42,7 @@ def train_model(model, train_loader, criterion, T):
       total += labels.size(0)
       correct += (predicted == labels).sum().item()
     fmt = 'Train Epoch: {0} Accuracy: {1}/{2}({3:.2f}%) Loss: {4:.3f}'
-    print(fmt.format(epoch, correct, total, correct / total, sum_less / total))
+    print(fmt.format(epoch, correct, total, 100 * correct / total, sum_loss / total))
 
 def evaluate_model(model, test_loader, criterion, show_loss = True):
     """
@@ -82,4 +82,4 @@ if __name__ == '__main__':
   criterion = nn.CrossEntropyLoss()
   data_loader = get_data_loader()
   model = build_model()
-  train(model, data_loader, criterion, 5)
+  train_model(model, data_loader, criterion, 5)
