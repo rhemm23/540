@@ -79,6 +79,10 @@ def predict_label(model, test_images, index):
         None
     """
 
+  output = model.forward(test_images[index])
+  prob = F.softmax(output, dim=10)
+  print(prob)
+
 
 if __name__ == '__main__':
   '''
@@ -91,3 +95,4 @@ if __name__ == '__main__':
   train_model(model, data_loader, criterion, 5)
   test_loader = get_data_loader(False)
   evaluate_model(model, test_loader, criterion, True)
+  predict_label(model, test_loader.dataset, 1)
