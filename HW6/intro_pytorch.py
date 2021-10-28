@@ -45,18 +45,23 @@ def train_model(model, train_loader, criterion, T):
     print(fmt.format(epoch, correct, total, 100 * correct / total, sum_loss / len(train_loader.dataset)))
 
 def evaluate_model(model, test_loader, criterion, show_loss = True):
-    """
-    TODO: implement this function.
-
-    INPUT: 
-        model - the the trained model produced by the previous function
-        test_loader    - the test DataLoader
-        criterion   - cropy-entropy 
-
-    RETURNS:
-        None
-    """
-    
+  model.eval()
+  sum_loss = 0
+  correct = 0
+  total = 0
+  with torch.no_grad():
+    for data, labels in test_loader:
+      outputs = model.forward(inputs)
+      if show_loss:
+        loss = criterion(outputs, labels)
+        sum_loss += loss.item()
+      _, predicted = torch.max(outputs.data, 1)
+      total += labels.size(0)
+      correct += (predicted == labels).sum().item()
+  if show_loss:
+    avg_loss = sum_loss / len(test_loader.dataset)
+    print('Average loss: {0:.4f}'.format(avg_loss))
+  print('Accuracy: {0:.2f}%'.format(100 * correct / total))
 
 
 def predict_label(model, test_images, index):
@@ -83,3 +88,5 @@ if __name__ == '__main__':
   data_loader = get_data_loader()
   model = build_model()
   train_model(model, data_loader, criterion, 5)
+  test_loader = get_data_loader(False)
+  evaluate_model(model, test_loader, criterion, True)
