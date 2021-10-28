@@ -65,7 +65,7 @@ def evaluate_model(model, test_loader, criterion, show_loss = True):
   print('Accuracy: {0:.2f}%'.format(100 * correct / total))
 
 def predict_label(model, test_images, index):
-  output = model.forward(test_images[index])
+  output = model.forward(test_images[index][0])
   prob = F.softmax(output, dim=10)
   print(prob)
 
