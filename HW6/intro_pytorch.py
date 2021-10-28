@@ -42,7 +42,7 @@ def train_model(model, train_loader, criterion, T):
       total += labels.size(0)
       correct += (predicted == labels).sum().item()
     fmt = 'Train Epoch: {0} Accuracy: {1}/{2}({3:.2f}%) Loss: {4:.3f}'
-    print(fmt.format(epoch, correct, total, 100 * correct / total, sum_loss / total))
+    print(fmt.format(epoch, correct, total, 100 * correct / total, sum_loss / len(train_loader.dataset)))
 
 def evaluate_model(model, test_loader, criterion, show_loss = True):
     """
