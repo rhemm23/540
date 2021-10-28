@@ -50,7 +50,8 @@ def evaluate_model(model, test_loader, criterion, show_loss = True):
   correct = 0
   total = 0
   with torch.no_grad():
-    for data, labels in test_loader:
+    for data in test_loader:
+      inputs, labels = data
       outputs = model.forward(inputs)
       if show_loss:
         loss = criterion(outputs, labels)
