@@ -64,21 +64,7 @@ def evaluate_model(model, test_loader, criterion, show_loss = True):
     print('Average loss: {0:.4f}'.format(avg_loss))
   print('Accuracy: {0:.2f}%'.format(100 * correct / total))
 
-
 def predict_label(model, test_images, index):
-    """
-    TODO: implement this function.
-
-    INPUT: 
-        model - the trained model
-        test_images   -  test image set of shape Nx1x28x28
-        index   -  specific index  i of the image to be tested: 0 <= i <= N - 1
-
-
-    RETURNS:
-        None
-    """
-
   output = model.forward(test_images[index])
   prob = F.softmax(output, dim=10)
   print(prob)
