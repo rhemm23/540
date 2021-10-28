@@ -23,24 +23,26 @@ def build_model():
     nn.Linear(64, 10)
   )
 
-
-
-
 def train_model(model, train_loader, criterion, T):
-    """
-    TODO: implement this function.
-
-    INPUT: 
-        model - the model produced by the previous function
-        train_loader  - the train DataLoader produced by the first function
-        criterion   - cross-entropy 
-        T - number of epochs for training
-
-    RETURNS:
-        None
-    """
-    
-
+  opt = optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
+  model.train()
+  for epoch in range(T):
+    sum_loss = 0.0
+    correct = 0
+    total = 0
+    for i, data in enumerate(train_loader):
+      inputs, labels = data
+      opt.zero_grad()
+      outputs = model.forward(inputs)
+      loss = criterion(outputs, labels)
+      loss.backward()
+      opt.step()
+      sum_loss += loss.item()
+      _, predicted = torch.max(outputs.data, 1)
+      total += labels.size(0)
+      correct += (predicted == labels).sum().item()
+    fmt = 'Train Epoch: {0} Accuracy: {1}/{2}({3:.2f}%) Loss: {4:.3f}'
+    print(fmt.format(epoch, correct, total, correct / total, sum_less / total))
 
 def evaluate_model(model, test_loader, criterion, show_loss = True):
     """
@@ -73,8 +75,11 @@ def predict_label(model, test_images, index):
 
 
 if __name__ == '__main__':
-    '''
-    Feel free to write your own test code here to exaime the correctness of your functions. 
-    Note that this part will not be graded.
-    '''
-    criterion = nn.CrossEntropyLoss()
+  '''
+  Feel free to write your own test code here to exaime the correctness of your functions. 
+  Note that this part will not be graded.
+  '''
+  criterion = nn.CrossEntropyLoss()
+  data_loader = get_data_loader()
+  model = build_model()
+  train(model, data_loader, criterion, 5)
