@@ -65,10 +65,23 @@ def evaluate_model(model, test_loader, criterion, show_loss = True):
   print('Accuracy: {0:.2f}%'.format(100 * correct / total))
 
 def predict_label(model, test_images, index):
-  output = model.forward(test_images[index][0])
-  prob = F.softmax(output, dim=10)
-  print(prob)
-
+  output = model.forward(test_images[index])
+  probs = F.softmax(output, dim=1)
+  named = [
+    (probs[0][0], 'zero'),
+    (probs[0][1], 'one'),
+    (probs[0][2], 'two'),
+    (probs[0][3], 'three'),
+    (probs[0][4], 'four'),
+    (probs[0][5], 'five'),
+    (probs[0][6], 'six'),
+    (probs[0][7], 'seven'),
+    (probs[0][8], 'eight'),
+    (probs[0][9], 'nine')
+  ]
+  named.sort(key = lambda x: x[0], reverse=True)
+  for i in range(3):
+    print('{0}: {1:.2f}%'.format(named[i][1], named[i][0] * 100))
 
 if __name__ == '__main__':
   '''
@@ -80,5 +93,6 @@ if __name__ == '__main__':
   model = build_model()
   train_model(model, data_loader, criterion, 5)
   test_loader = get_data_loader(False)
+  data = [test_loader.dataset[0][0], test_loader.dataset[1][0]]
   evaluate_model(model, test_loader, criterion, True)
-  predict_label(model, test_loader.dataset, 1)
+  predict_label(model, data, 1)
