@@ -8,58 +8,54 @@ class Teeko2Player:
     self.my_piece = random.choice(self.pieces)
     self.opp = self.pieces[0] if self.my_piece == self.pieces[1] else self.pieces[1]
 
-  def max_value(self, state, piece, depth):
-    succs = self.succ(state, piece)
-    if depth == 2:
-      
+  def min_value(self, state, depth):
+    gv = self.heuristic_game_value(state)
+    if gv == 1 or gv == -1 or depth == 3:
+      return (gv, state)
+    else:
+      succs = self.succ(state, self.opp)
+      min_val = float('inf')
+      min_succ = None
+      for succ in succs:
+        val, _ = self.max_value(succ, depth + 1)
+        if val < min_val:
+          min_succ = succ
+          min_val = val
+      return min_val, min_succ
+
+  def max_value(self, state, depth):
+    gv = self.heuristic_game_value(state)
+    if gv == 1 or gv == -1 or depth == 3:
+      return gv, state
+    else:
+      succs = self.succ(state, self.my_piece)
+      max_val = float('-inf')
+      max_succ = None
+      for succ in succs:
+        val, _ = self.min_value(succ, depth + 1)
+        if val > max_val:
+          max_succ = succ
+          max_val = val
+      return max_val, max_succ
 
   def make_move(self, state):
-    """ Selects a (row, col) space for the next move. You may assume that whenever
-    this function is called, it is this player's turn to move.
-
-    Args:
-        state (list of lists): should be the current state of the game as saved in
-            this Teeko2Player object. Note that this is NOT assumed to be a copy of
-            the game state and should NOT be modified within this method (use
-            place_piece() instead). Any modifications (e.g. to generate successors)
-            should be done on a deep copy of the state.
-
-            In the "drop phase", the state will contain less than 8 elements which
-            are not ' ' (a single space character).
-
-    Return:
-        move (list): a list of move tuples such that its format is
-                [(row, col), (source_row, source_col)]
-            where the (row, col) tuple is the location to place a piece and the
-            optional (source_row, source_col) tuple contains the location of the
-            piece the AI plans to relocate (for moves after the drop phase). In
-            the drop phase, this list should contain ONLY THE FIRST tuple.
-
-    Note that without drop phase behavior, the AI will just keep placing new markers
-        and will eventually take over the board. This is not a valid strategy and
-        will earn you no points.
-    """
-
-    drop_phase = True   # TODO: detect drop phase
-
-    if not drop_phase:
-      # TODO: choose a piece to move and remove it from the board
-      # (You may move this condition anywhere, just be sure to handle it)
-      #
-      # Until this part is implemented and the move list is updated
-      # accordingly, the AI will not follow the rules after the drop phase!
-      pass
-
-    # select an unoccupied space randomly
-    # TODO: implement a minimax algorithm to play better
+    _, new_state = self.max_value(state, 0)
+    new_piece = None
+    rem_piece = None
     move = []
-    (row, col) = (random.randint(0,4), random.randint(0,4))
-    while not state[row][col] == ' ':
-      (row, col) = (random.randint(0,4), random.randint(0,4))
+    cnt = 0
 
-    # ensure the destination (row,col) tuple is at the beginning of the move list
-    move.insert(0, (row, col))
-    return move
+    for row in range(5):
+      for col in range(5):
+        if state[row][col] == ' ' and new_state[row][col] == self.my_piece:
+          new_piece = (row, col)
+        elif new_state[row][col] == ' ' and state[row][col] == self.my_piece:
+          rem_piece = (row, col)
+        cnt += 1 if state[row][col] != ' ' else 0
+
+    if cnt < 8:
+      return [new_piece]
+    return [new_piece, rem_piece]
 
   def succ(self, state, piece):
     cnt = 0
@@ -102,17 +98,7 @@ class Teeko2Player:
     return succs
 
   def opponent_move(self, move):
-    """ Validates the opponent's next move against the internal board representation.
-    You don't need to touch this code.
 
-    Args:
-        move (list): a list of move tuples such that its format is
-                [(row, col), (source_row, source_col)]
-            where the (row, col) tuple is the location to place a piece and the
-            optional (source_row, source_col) tuple contains the location of the
-            piece the AI plans to relocate (for moves after the drop phase). In
-            the drop phase, this list should contain ONLY THE FIRST tuple.
-    """
     # validate input
     if len(move) > 1:
       source_row = move[1][0]
@@ -285,12 +271,4 @@ def main():
     print("You win! Game over.")
 
 if __name__ == "__main__":
-  ai = Teeko2Player()
-  state = [['r', 'b', 'r', 'b', 'r'],['r', 'b', 'b', ' ', ' '],[' ',' ',' ',' ',' '],[' ',' ',' ',' ',' '],[' ',' ',' ',' ',' ']]
-  succs = ai.succ(state, ai.my_piece)
-  for succ in succs:
-    print('\n')
-    for row in succ:
-      print(row)
-  exit()
   main()
