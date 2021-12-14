@@ -41,7 +41,10 @@ if __name__ == "__main__":
       next_state, reward, done, _ = env.step(action)
 
       next_predictions = np.array([Q_table[(next_state, j)] for j in range(env.action_space.n)])
-      target = reward + DISCOUNT_FACTOR * np.max(next_predictions)
+      target = reward
+
+      if not done:
+        target += DISCOUNT_FACTOR * np.max(next_predictions)
 
       Q_table[(state, action)] = Q_table[(state, action)] + LEARNING_RATE * (target - Q_table[(state, action)])
       episode_reward += reward
